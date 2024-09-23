@@ -1,0 +1,21 @@
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Account created successfully!')
+        return redirect(url_for('login'))
+    return render_template('signup.html')
+
+    {% extends 'layout.html' %}
+    {% block content %}
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Submit</button>
+    </form>
+    {% endblock %}
+    

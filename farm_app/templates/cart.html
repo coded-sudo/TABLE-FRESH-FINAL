@@ -1,0 +1,42 @@
+cart = []
+
+@app.route('/products')
+@login_required
+def products():
+    all_products = Product.query.all()
+    return render_template('products.html', products=all_products)
+
+@app.route('/add_to_cart/<int:product_id>')
+@login_required
+def add_to_cart(product_id):
+    product = Product.query.get(product_id)
+    cart.append(product)
+    flash(f'{product.name} added to cart!')
+    return redirect(url_for('products'))
+
+@app.route('/cart')
+@login_required
+def view_cart():
+    return render_template('cart.html', cart=cart)
+
+@app.route('/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    if request.method == 'POST':
+        address = request.form['address']
+        # Implement payment processing here
+        flash('Order placed successfully!')
+        cart.clear()
+        return redirect(url_for('products'))
+    return render_template('checkout.html')
+    {% extends 'layout.html' %}
+    {% block content %}
+    <h1>Your Cart</h1>
+    <ul>
+        {% for item in cart %}
+        <li>{{ item.name }} - ${{ item.price }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('checkout') }}">Checkout</a>
+    {% endblock %}
+    
